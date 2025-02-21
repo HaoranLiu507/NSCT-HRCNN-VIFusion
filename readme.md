@@ -1,4 +1,4 @@
-# Visible and infrared image fusion model based on HRCNN
+# Visible and infrared image fusion model based on NSCT-HRCNN
 
 ## Introduction
 This project introduces an image fusion algorithm, NSCT-HRCNN, designed to effectively merge infrared and visible light images, capturing distinct environmental features from both modalities into a single, comprehensive image. Image fusion is crucial for fully representing these features, but traditional algorithms often suffer from low precision, color distortion, and detail loss. While deep learning-based methods can address these issues, they tend to be computationally intensive.
@@ -20,15 +20,15 @@ Haoran Liu, Yiran Chen, Peng Li, Mingzhe Liu* "Infrared and Visible Image Fusion
 ## How to use
 
 Run the demo.m file to perform IR and VI image fusion on a directory of images. The resulting fused images will then be generated.
-
-1.  **Prepare Input Images:** Load your visible (`imgVI`) and infrared (`imgIR`) images into MATLAB as `uint8` or `double` arrays.  Ensure they are properly registered (aligned).
-2.  **Set Visualization Flag:** Decide whether you want to visualize the images during the fusion process. Set `visualization` to `1` to display the images or `0` to suppress display.
-3.  **Set Parameter Selection Flag:** Choose whether to use the genetic algorithm to optimize parameters or use the default parameters. Set `flag` to `1` to use the genetic algorithm or `0` to use the default parameters.
-4.  **Call the Function:** Call the `run_RCNN` function with the appropriate input arguments:
+1.  **Unzip:** Since the fusion folder is large, unzip it after downloading.  Use the appropriate command for your operating system, such as unzip fusion.zip .  This will extract the contents of the archive into the current directory
+2.  **Prepare Input Images:** Load your visible (`imgVI`) and infrared (`imgIR`) images into MATLAB as `uint8` or `double` arrays.  Ensure they are properly registered (aligned).
+3.  **Set Visualization Flag:** Decide whether you want to visualize the images during the fusion process. Set `visualization` to `1` to display the images or `0` to suppress display.
+4.  **Set Parameter Selection Flag:** Choose whether to use the genetic algorithm to optimize parameters or use the default parameters. Set `flag` to `1` to use the genetic algorithm or `0` to use the default parameters.
+5.  **Call the Function:** Call the `run_RCNN` function with the appropriate input arguments:
         
     ```
     fusedImage = run_RCNN(visibleImage, infraredImage, 1, 1);
-5.  **Display or Save the Fused Image:**  Display the resulting fused image using `imshow(fusedImage)` or save it to a file using `imwrite(fusedImage, 'fused_image.png')`.
+6.  **Display or Save the Fused Image:**  Display the resulting fused image using `imshow(fusedImage)` or save it to a file using `imwrite(fusedImage, 'fused_image.png')`.
 
 ### Example
 MATLAB
