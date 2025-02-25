@@ -48,6 +48,6 @@ imwrite(fusedImage, 'fused_image.png');
    ```
 ## Dataset and Model Results
 
-This application will open source test results and source code, which you can download here:
+This application will open source fusion results, which you can download here:
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14921832.svg)](https://doi.org/10.5281/zenodo.14921832)
