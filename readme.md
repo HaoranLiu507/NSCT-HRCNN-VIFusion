@@ -1,53 +1,117 @@
-# Visible and infrared image fusion model based on NSCT-HRCNN
+# NSCT-HRCNN: Infrared–Visible Image Fusion
 
-## Introduction
-This project introduces an image fusion algorithm, NSCT-HRCNN, designed to effectively merge infrared and visible light images, capturing distinct environmental features from both modalities into a single, comprehensive image. Image fusion is crucial for fully representing these features, but traditional algorithms often suffer from low precision, color distortion, and detail loss. While deep learning-based methods can address these issues, they tend to be computationally intensive.
-
-To overcome these challenges, our approach leverages the Non-Subsampled Contourlet Transform (NSCT) combined with a Hierarchical Random-Coupled Neural Network (HRCNN). This method offers the computational efficiency of traditional techniques while avoiding extensive neural network training. By integrating hierarchical features, the NSCT-HRCNN algorithm addresses common drawbacks such as artifacts and color distortion, preserving the natural color information from visible light images and incorporating clear details from infrared images. Comparative experiments on the VIFB dataset demonstrate that NSCT-HRCNN significantly outperforms state-of-the-art methodologies.
+NSCT-HRCNN fuses infrared (IR) and visible (VI) images into a single image with sharp details and natural colors. It combines the Non-Subsampled Contourlet Transform (NSCT) with a Hierarchical Random-Coupled Neural Network (HRCNN) and optionally uses a lightweight Genetic Algorithm (GA) to tune parameters. This preserves the speed of traditional methods while avoiding heavy deep-model training.
 
 ![](README.png)
-If you find our work useful in your research or publication, please cite our work:
 
-Haoran Liu, Yiran Chen, Peng Li, Mingzhe Liu* "Infrared and Visible Image Fusion based on NSCT and Hierarchical Random-Coupled Neural Network." Not published yet.
+If you use this repository, please consider citing:
 
-## Dependencies
+Haoran Liu, Yiran Chen, Peng Li, Mingzhe Liu*. "Infrared and Visible Image Fusion based on NSCT and Hierarchical Random-Coupled Neural Network." (In preparation).
 
-*	MATLAB2024b version is recommended
-*   **`Fusion` Folder:** This folder must be in the MATLAB path and contain the `fusion_main` function, which performs the core image fusion operation.
-*   **`Genetic-Algorithm` Folder:** This folder must be in the MATLAB path and contain the `GA_Main` function, which is used for genetic algorithm-based parameter optimization when `flag` is set to `1`.
+## Requirements
 
+- MATLAB (tested on R2024b; R2020b+ should work)
+- Image Processing Toolbox (for `psnr`, `entropy`, `imshow`)
+- Parallel Computing Toolbox (optional, used by `demo.m` for `parfor` acceleration)
 
-## How to use
+## Repository Setup
 
-Run the demo.m file to perform IR and VI image fusion on a directory of images. The resulting fused images will then be generated.
-1.  **Unzip:** Extract the contents of the fusion.zip file.
-2.  **Prepare Input Images:** Load your visible (`imgVI`) and infrared (`imgIR`) images into MATLAB as `uint8` or `double` arrays.  Ensure they are properly registered (aligned).
-3.  **Set Visualization Flag:** Decide whether you want to visualize the images during the fusion process. Set `visualization` to `1` to display the images or `0` to suppress display.
-4.  **Set Parameter Selection Flag:** Choose whether to use the genetic algorithm to optimize parameters or use the default parameters. Set `flag` to `1` to use the genetic algorithm or `0` to use the default parameters.
-5.  **Call the Function:** Call the `run_RCNN` function with the appropriate input arguments:
-        
-    ```
-    fusedImage = run_RCNN(visibleImage, infraredImage, 1, 1);
-6.  **Display or Save the Fused Image:**  Display the resulting fused image using `imshow(fusedImage)` or save it to a file using `imwrite(fusedImage, 'fused_image.png')`.
+1. Clone or download this repository.
+2. Extract `Fusion.zip` into the repository root so that a folder `Fusion/` is created. This folder must contain `fusion_main.m` and its subfolders (e.g., `Tool_function/`, `function/`, `enhancement_fun/`).
+3. In MATLAB, add the repository to the path:
 
-### Example
-MATLAB
+   ```matlab
+   addpath(genpath(pwd));
    ```
-% Load the visible and infrared images (replace with your actual file paths)
-visibleImage = imread('visible_image.jpg');
-infraredImage = imread('infrared_image.png');
 
-% Run the RCNN fusion with visualization and genetic algorithm parameter optimization
-fusedImage = run_RCNN(visibleImage, infraredImage, 1, 1);
+## Quick Start
 
-% Display the fused image
-imshow(fusedImage);
+### Fuse a single image pair
 
-% Save the fused image
-imwrite(fusedImage, 'fused_image.png');
-   ```
-## Dataset and Model Results
+```matlab
+% Read your visible and infrared images (ensure they are registered/aligned)
+vi = imread('path/to/visible.jpg');
+ir = imread('path/to/infrared.jpg');
 
-This application will open source fusion results, which you can download here:
+% Run fusion: visualization=1 (show figures), flag=0 (use default params)
+fused = run_RCNN(vi, ir, 1, 0);
+
+imshow(fused);
+imwrite(fused, 'fused_image.png');
+```
+
+Parameters of `run_RCNN(imgVI, imgIR, visualization, flag)`:
+
+- `visualization` (0/1): show input and fused images.
+- `flag` (0/1): use GA to tune parameters when 1; use defaults when 0.
+
+Returns: fused image (`uint8`).
+
+### Batch demo
+
+The provided `demo.m` fuses a predefined list of image pairs in parallel and saves outputs.
+
+Steps:
+- Place your images under `image/VI/` and `image/IR/` and follow the naming pattern used by the demo:
+  - Visible: `image/VI/<name>.jpg`
+  - Infrared: `image/IR/<name>2.jpg`
+  This naming pattern exactly matches the code: VI: `image/VI/<name>.jpg`, IR: `image/IR/<name>2.jpg`.
+- Open `demo.m` and edit the `img` list (the `name` field) to match your files.
+- Optional: adjust the number of workers depending on your machine:
+
+  ```matlab
+  c = parcluster('local');
+  c.NumWorkers = 8; % e.g., set to a reasonable value for your CPU
+  saveProfile(c);
+  ```
+
+- Set switches at the top of `demo.m`:
+  - `GA_switch = 1` enables GA tuning (slower, potentially better quality).
+  - `visualization = 0/1` toggles figures.
+
+Note: When using `parfor`, keep `visualization = 0`. If you want figures, switch the loops in `demo.m` from `parfor` to `for`.
+
+Run the script. It will also save `result_img.mat` and an example `fusion.png`.
+
+## GA tuning (optional)
+
+When `flag = 1`, `run_RCNN` calls `Genetic-Algorithm/GA_Main.m` to optimize 5 dynamic parameters. Default GA hyperparameters are small for speed:
+
+- population size = 5
+- iterations = 5
+
+You can change them in `GA_Main.m` (`NUMPOP`, `ITERATION`, etc.). GA uses randomness; for reproducibility, set a seed at the start of your session:
+
+```matlab
+rng(0);
+```
+
+## Project Structure
+
+- `run_RCNN.m`: Main entry point for fusing one image pair.
+- `Fusion/`: Core fusion implementation (created by unzipping `Fusion.zip`).
+- `Genetic-Algorithm/`: GA components (`GA_Main.m`, selection/crossover/mutation, fitness).
+- `demo.m`: Parallel batch fusion using predefined file names.
+- `README.png`: Illustration used in this README.
+
+## Results and Data
+
+Open-source fusion results are available on Zenodo:
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14921832.svg)](https://doi.org/10.5281/zenodo.14921832)
+
+## Troubleshooting
+
+- Undefined function `fusion_main`: ensure `Fusion.zip` is extracted to `Fusion/` and that you ran `addpath(genpath(pwd))`.
+- `psnr` or `entropy` not found: install the Image Processing Toolbox.
+- Parallel errors (`parcluster`, `parfor`): install the Parallel Computing Toolbox, reduce `NumWorkers`, or convert `parfor` to `for` for a serial run.
+- Poor fusion/alignment artifacts: ensure VI/IR images are geometrically registered before fusion.
+- Non-Windows systems: `demo.m` uses Windows-style `addpath("image\...")`. Replace with cross-platform paths using `filesep` or `fullfile`.
+
+## License
+
+MIT License. See `LICENSE` for details.
+
+## Citation
+
+If you find this work useful, please cite the manuscript above. A BibTeX entry will be provided upon publication.

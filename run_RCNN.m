@@ -1,5 +1,5 @@
 function img = run_RCNN(imgVI, imgIR, visualization, flag)
-% Runs the Random-Coupled Neural Network (RCNN) based image fusion on visible (VI) and infrared (IR) images.
+% Runs the Hierarchical Random-Coupled Neural Network (HRCNN) based image fusion on visible (VI) and infrared (IR) images.
 %
 % Inputs:
 %   imgVI: Visible light image (uint8 or double).

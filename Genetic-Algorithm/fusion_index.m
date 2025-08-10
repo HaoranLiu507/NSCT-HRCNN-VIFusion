@@ -7,7 +7,7 @@ e2 = entropy(IM_IR);
 PSNR1 = psnr(IM_VI,VI_img)/4;
 PSNR2 = psnr(IM_IR,IR_img)/4;
 SF1 = SpatialFrequency(IM_VI);
-SF2 = SpatialFrequency(IM_VI);
+SF2 = SpatialFrequency(IM_IR);
 E = PSNR1 + PSNR2 + SF1 + SF2 + e1 + e2;
 
 end

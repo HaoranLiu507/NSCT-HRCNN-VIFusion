@@ -1,12 +1,12 @@
 %% Subfunction
 %
-%Title£ºVariation
+%Titleï¿½ï¿½Variation
 %
 %
-%Input £º
+%Input ï¿½ï¿½
 %           pop              population
 %           VARIATIONRATE    mutant rate
-%Output £º
+%Output ï¿½ï¿½
 %           pop              The population after the mutation
 %% 
 function kidsPop = Variation(kidsPop,VARIATIONRATE)
@@ -15,8 +15,12 @@ for n=1:size(kidsPop,2)
         temp = kidsPop{n};
         %The mutant population finds the mutant position
         location = ceil(length(temp)*rand);
-        temp = [temp(1:location-1) num2str(~temp(location))...
-            temp(location+1:end)];
+        % Flip the selected bit character '0' <-> '1'
+        if temp(location) == '0'
+            temp(location) = '1';
+        else
+            temp(location) = '0';
+        end
        kidsPop{n} = temp;
     end
 end
